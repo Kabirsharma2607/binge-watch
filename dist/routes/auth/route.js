@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRouter = void 0;
 const express_1 = require("express");
 const client_1 = require("@prisma/client");
+const utils_1 = require("./utils");
 const prisma = new client_1.PrismaClient();
 const router = (0, express_1.Router)();
 router.get("/auth-health", (req, res) => {
@@ -20,32 +21,86 @@ router.get("/auth-health", (req, res) => {
     });
 });
 router.post("/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("here");
-    const { body } = req;
-    const { name, email, password, username } = body;
-    const user = yield prisma.user.findUnique({
-        where: {
-            username,
-        },
-    });
-    if (user) {
-        console.log("user is there");
-        res.status(400);
-        return;
-    }
-    const newUser = yield prisma.user.create({
-        data: {
-            name,
-            username,
-            email,
-            authDetails: {
-                create: {
-                    password,
+    try {
+        const { body } = req;
+        const { name, email, password, username } = body;
+        const user = yield prisma.user.findUnique({
+            where: {
+                username,
+            },
+        });
+        if (user) {
+            res.status(400).send("User already exists");
+            return;
+        }
+        const { hashedName, hashedEmail, hashedPassword } = yield (0, utils_1.userHashedSignupDetails)(name, email, password);
+        const newUser = yield prisma.user.create({
+            data: {
+                name: hashedName,
+                username,
+                email: hashedEmail,
+                authDetails: {
+                    create: {
+                        password: hashedPassword,
+                    },
                 },
             },
-        },
-    });
-    res.status(200);
-    return;
+        });
+        if (newUser) {
+            const authToken = (0, utils_1.generateAuthToken)(newUser.user_id);
+            res.status(201).json({
+                message: "User created",
+                token: authToken,
+            });
+        }
+        else {
+            res.status(400).send("User not created");
+        }
+        return;
+    }
+    catch (error) {
+        res.status(500).send("Internal error");
+        return;
+    }
+}));
+router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const { body } = req;
+        const { username, password } = body;
+        const user = yield prisma.user.findUnique({
+            where: {
+                username,
+            },
+            select: {
+                user_id: true,
+                authDetails: {
+                    select: {
+                        password: true,
+                    },
+                },
+            },
+        });
+        if (!user) {
+            res.status(401).send("Invalid credentials");
+            return;
+        }
+        const isPasswordValid = yield (0, utils_1.validatePassword)(password, (_a = user.authDetails) === null || _a === void 0 ? void 0 : _a.password);
+        if (isPasswordValid) {
+            const authToken = (0, utils_1.generateAuthToken)(user.user_id);
+            res.status(200).json({
+                message: "Logged in",
+                token: authToken,
+            });
+        }
+        else {
+            res.status(401).send("Invalid credentials");
+        }
+        return;
+    }
+    catch (error) {
+        res.status(500).send("Internal error");
+        return;
+    }
 }));
 exports.authRouter = router;
