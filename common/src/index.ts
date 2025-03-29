@@ -19,3 +19,12 @@ export const loginSchema = z
   .strict();
 
 export type LoginSchema = z.infer<typeof loginSchema>;
+
+export const createRoomSchema = z
+  .object({
+    name: z.string(),
+    capacity: z.bigint(),
+  })
+  .strict();
+
+export type CreateRoomSchema = z.infer<typeof createRoomSchema>;
