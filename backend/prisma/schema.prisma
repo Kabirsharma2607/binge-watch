@@ -40,7 +40,7 @@ model AuthDetails {
 
 model RoomParticipant {
   id      Int         @id @default(autoincrement())
-  room_id String
+  room_id BigInt
   user_id String
   room    RoomDetails @relation(fields: [room_id], references: [room_id])
   user    User        @relation(fields: [user_id], references: [user_id])
@@ -50,7 +50,7 @@ model RoomParticipant {
 
 model RoomDetails {
   id           Int               @id @default(autoincrement())
-  room_id      String            @unique
+  room_id      BigInt            @unique
   name         String
   capacity     Int
   created_at   DateTime          @default(now())
