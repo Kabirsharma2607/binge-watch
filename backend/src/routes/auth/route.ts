@@ -29,7 +29,7 @@ router.post("/sign-up", async (req: Request, res: Response) => {
 
     const { name, email, password, username } = data;
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: {
         username,
       },
@@ -41,7 +41,7 @@ router.post("/sign-up", async (req: Request, res: Response) => {
     }
     const { hashedName, hashedEmail, hashedPassword } =
       await userHashedSignupDetails(name, email, password);
-    const newUser = await prisma.user.create({
+    const newUser = await prisma.users.create({
       data: {
         name: hashedName,
         username,
@@ -80,7 +80,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
     const { username, password } = data;
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: {
         username,
       },

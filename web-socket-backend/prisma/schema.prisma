@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model auth_details {
+  id       Int    @id @default(autoincrement())
+  password String
+  user_id  String @unique
+  users    users  @relation(fields: [user_id], references: [user_id])
+
+  @@index([id])
+  @@index([user_id])
+}
+
+model room_details {
+  id               Int                @id @default(autoincrement())
+  room_id          BigInt             @unique
+  name             String
+  capacity         Int
+  created_at       DateTime           @default(now())
+  updated_at       DateTime
+  room_participant room_participant[]
+  users            users[]
+
+  @@index([id])
+}
+
+model room_participant {
+  id           Int          @id @default(autoincrement())
+  room_id      BigInt
+  user_id      String
+  room_details room_details @relation(fields: [room_id], references: [room_id])
+  users        users        @relation(fields: [user_id], references: [user_id])
+
+  @@unique([room_id, user_id])
+}
+
+model users {
+  id               Int                @id @default(autoincrement())
+  user_id          String             @unique
+  name             String
+  username         String             @unique
+  email            String             @unique
+  roomDetailsId    Int?
+  auth_details     auth_details?
+  room_participant room_participant[]
+  room_details     room_details?      @relation(fields: [roomDetailsId], references: [id])
+
+  @@index([id])
+  @@index([user_id])
+}

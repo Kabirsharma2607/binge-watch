@@ -13,50 +13,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model users {
   id                Int               @id @default(autoincrement())
   user_id           String            @unique @default(uuid())
   name              String
   username          String            @unique
   email             String            @unique
-  authDetails       AuthDetails?      @relation
-  user_current_room RoomDetails?      @relation(fields: [roomDetailsId], references: [id])
+  authDetails       auth_details?      @relation
+  user_current_room room_details?      @relation(fields: [roomDetailsId], references: [id])
   roomDetailsId     Int?
-  RoomParticipant   RoomParticipant[]
+  room_participant   room_participant[]
 
   @@index([id])
   @@index([user_id])
 }
 
-model AuthDetails {
+model auth_details {
   id       Int    @id @default(autoincrement())
   password String
   user_id  String @unique
-  user     User   @relation(fields: [user_id], references: [user_id])
+  user     users   @relation(fields: [user_id], references: [user_id])
 
   @@index([id])
   @@index([user_id])
 }
 
-model RoomParticipant {
+model room_participant {
   id      Int         @id @default(autoincrement())
-  room_id String
+  room_id BigInt
   user_id String
-  room    RoomDetails @relation(fields: [room_id], references: [room_id])
-  user    User        @relation(fields: [user_id], references: [user_id])
+  room    room_details @relation(fields: [room_id], references: [room_id])
+  user    users        @relation(fields: [user_id], references: [user_id])
 
   @@unique([room_id, user_id])
 }
 
-model RoomDetails {
+model room_details {
   id           Int               @id @default(autoincrement())
-  room_id      String            @unique
+  room_id      BigInt            @unique @default(dbgenerated())
   name         String
   capacity     Int
   created_at   DateTime          @default(now())
   updated_at   DateTime          @updatedAt
-  participants RoomParticipant[] @relation
-  User         User[]
+  participants room_participant[] @relation
+  User         users[]
 
   @@index([id])
 }
