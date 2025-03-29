@@ -13,6 +13,7 @@ exports.authRouter = void 0;
 const express_1 = require("express");
 const client_1 = require("@prisma/client");
 const utils_1 = require("./utils");
+const binge_watch_common_1 = require("@kabir.26/binge-watch-common");
 const prisma = new client_1.PrismaClient();
 const router = (0, express_1.Router)();
 router.get("/auth-health", (req, res) => {
@@ -23,6 +24,11 @@ router.get("/auth-health", (req, res) => {
 router.post("/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
+        const { success } = binge_watch_common_1.signUpSchema.safeParse(body);
+        if (!success) {
+            res.status(400).send("Invalid signup details");
+            return;
+        }
         const { name, email, password, username } = body;
         const user = yield prisma.user.findUnique({
             where: {
@@ -67,7 +73,15 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     var _a;
     try {
         const { body } = req;
+        console.log(body);
+        const data = binge_watch_common_1.loginSchema.parse(body);
+        // const data = loginSchema.safeParse(body);
         const { username, password } = body;
+        console.log(data);
+        // if (!success) {
+        //   res.status(400).send("Invalid login details");
+        //   return;
+        // }
         const user = yield prisma.user.findUnique({
             where: {
                 username,

@@ -5,6 +5,9 @@ import {
   userHashedSignupDetails,
   validatePassword,
 } from "./utils";
+
+import { signUpSchema, loginSchema } from "@kabir.26/binge-watch-common";
+
 const prisma = new PrismaClient();
 
 const router = Router();
@@ -17,9 +20,14 @@ router.get("/auth-health", (req: Request, res: Response) => {
 
 router.post("/sign-up", async (req: Request, res: Response) => {
   try {
-    const { body } = req;
+    const { success, data } = signUpSchema.safeParse(req.body);
 
-    const { name, email, password, username } = body;
+    if (!success) {
+      res.status(400).send("Invalid signup details");
+      return;
+    }
+
+    const { name, email, password, username } = data;
 
     const user = await prisma.user.findUnique({
       where: {
@@ -63,8 +71,15 @@ router.post("/sign-up", async (req: Request, res: Response) => {
 
 router.post("/login", async (req: Request, res: Response) => {
   try {
-    const { body } = req;
-    const { username, password } = body;
+    const { success, data } = loginSchema.safeParse(req.body);
+
+    if (!success) {
+      res.status(400).send("Invalid login details");
+      return;
+    }
+
+    const { username, password } = data;
+
     const user = await prisma.user.findUnique({
       where: {
         username,
