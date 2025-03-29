@@ -23,7 +23,7 @@ export type LoginSchema = z.infer<typeof loginSchema>;
 export const createRoomSchema = z
   .object({
     name: z.string(),
-    capacity: z.bigint(),
+    capacity: z.number(),
   })
   .strict();
 

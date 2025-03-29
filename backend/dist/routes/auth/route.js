@@ -23,13 +23,12 @@ router.get("/auth-health", (req, res) => {
 });
 router.post("/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { body } = req;
-        const { success } = binge_watch_common_1.signUpSchema.safeParse(body);
+        const { success, data } = binge_watch_common_1.signUpSchema.safeParse(req.body);
         if (!success) {
             res.status(400).send("Invalid signup details");
             return;
         }
-        const { name, email, password, username } = body;
+        const { name, email, password, username } = data;
         const user = yield prisma.user.findUnique({
             where: {
                 username,
@@ -72,16 +71,12 @@ router.post("/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function
 router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const { body } = req;
-        console.log(body);
-        const data = binge_watch_common_1.loginSchema.parse(body);
-        // const data = loginSchema.safeParse(body);
-        const { username, password } = body;
-        console.log(data);
-        // if (!success) {
-        //   res.status(400).send("Invalid login details");
-        //   return;
-        // }
+        const { success, data } = binge_watch_common_1.loginSchema.safeParse(req.body);
+        if (!success) {
+            res.status(400).send("Invalid login details");
+            return;
+        }
+        const { username, password } = data;
         const user = yield prisma.user.findUnique({
             where: {
                 username,

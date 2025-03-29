@@ -1,6 +1,7 @@
 import { createRoomSchema } from "@kabir.26/binge-watch-common";
 import { PrismaClient } from "@prisma/client";
 import { Request, Response, Router } from "express";
+import { generateRoomId } from "./utils";
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,7 @@ router.get("/rooms-health", (req: Request, res: Response) => {
   });
 });
 
-router.post("/create-room", (req: Request, res: Response) => {
+router.post("/create-room", async (req: Request, res: Response) => {
   try {
     const { success, data } = createRoomSchema.safeParse(req.body);
     if (!success) {
@@ -20,13 +21,23 @@ router.post("/create-room", (req: Request, res: Response) => {
       return;
     }
     const { capacity, name } = data;
-    const room = prisma.roomDetails.create({
+    const roomId = generateRoomId();
+    const room = await prisma.roomDetails.create({
       data: {
-        capacity,
+        room_id: roomId,
         name,
+        capacity,
       },
     });
-  } catch (error) {}
+    res.status(200).json({
+      message: "Room created successfully",
+      roomId: room.room_id,
+    });
+    return;
+  } catch (error) {
+    res.status(500).send("Internal error");
+    return;
+  }
 });
 
 export const roomsRouter = router;
