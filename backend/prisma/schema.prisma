@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int               @id @default(autoincrement())
+  user_id           String            @unique @default(uuid())
+  name              String
+  username          String            @unique
+  email             String            @unique
+  authDetails       AuthDetails?      @relation
+  user_current_room RoomDetails?      @relation(fields: [roomDetailsId], references: [id])
+  roomDetailsId     Int?
+  RoomParticipant   RoomParticipant[]
+
+  @@index([id])
+  @@index([user_id])
+}
+
+model AuthDetails {
+  id       Int    @id @default(autoincrement())
+  password String
+  user_id  String @unique
+  user     User   @relation(fields: [user_id], references: [user_id])
+
+  @@index([id])
+  @@index([user_id])
+}
+
+model RoomParticipant {
+  id      Int         @id @default(autoincrement())
+  room_id String
+  user_id String
+  room    RoomDetails @relation(fields: [room_id], references: [room_id])
+  user    User        @relation(fields: [user_id], references: [user_id])
+
+  @@unique([room_id, user_id])
+}
+
+model RoomDetails {
+  id           Int               @id @default(autoincrement())
+  room_id      String            @unique
+  name         String
+  capacity     Int
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+  participants RoomParticipant[] @relation
+  User         User[]
+
+  @@index([id])
+}
