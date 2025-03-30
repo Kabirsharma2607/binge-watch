@@ -16,7 +16,6 @@ export const handleLeaveRoom = async (
       );
       return;
     }
-    console.log("19 er");
 
     await prisma.$transaction(async (tx) => {
       const user = await tx.users.findUnique({
@@ -25,6 +24,7 @@ export const handleLeaveRoom = async (
 
       if (!user) {
         ws.send(JSON.stringify({ type: "error", message: "User not found" }));
+        ws.close();
         throw new Error("User not found");
       }
 
@@ -34,6 +34,7 @@ export const handleLeaveRoom = async (
 
       if (!room) {
         ws.send(JSON.stringify({ type: "error", message: "Room not found" }));
+        ws.close();
         throw new Error("Room not found");
       }
 
@@ -52,6 +53,7 @@ export const handleLeaveRoom = async (
       });
 
       if (!remainingCount) {
+        ws.close();
         throw new Error("Room capacity check failed");
       }
 
@@ -70,16 +72,27 @@ export const handleLeaveRoom = async (
       if (client.readyState === WebSocket.OPEN && ws !== client) {
         client.send(
           JSON.stringify({
-            type: "User left the room",
+            type: "USER_LEFT",
             message: `${username} left`,
           })
         );
       }
     });
-    console.log(`�� ${username} left room ${roomId}`);
+
+    ws.send(
+      JSON.stringify({
+        type: "SUCCESS",
+        message: "You have left the room",
+      })
+    );
+
+    console.log(`👋 ${username} left room ${roomId}`);
+
+    ws.close();
   } catch (error) {
     ws.send(
       JSON.stringify({ type: "error", message: "Error leaving the room" })
     );
+    console.error("Error in handleLeaveRoom:", error);
   }
 };

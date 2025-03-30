@@ -74,3 +74,31 @@ export const leaveRoomSchema = z.object({
 });
 
 export type LeaveRoomSchema = z.infer<typeof leaveRoomSchema>;
+
+export const textMessageSchema = z.object({
+  type: z.enum([WebSocketActions.TEXT_MESSAGE]),
+  data: z.object({
+    roomId: z.string(),
+    username: z.string(),
+    message: z.string(),
+  }),
+});
+
+export type TextMessageSchema = z.infer<typeof textMessageSchema>;
+
+export enum VideoActions {
+  PLAY = "PLAY",
+  PAUSE = "PAUSE",
+  SEEK = "SEEK",
+}
+
+export const actionsSchema = z.object({
+  type: z.enum([WebSocketActions.ACTIONS]),
+  data: z.object({
+    roomId: z.string(),
+    username: z.string(),
+    action: z.enum([VideoActions.PLAY, VideoActions.SEEK, VideoActions.PAUSE]),
+  }),
+});
+
+export type ActionsSchema = z.infer<typeof actionsSchema>;

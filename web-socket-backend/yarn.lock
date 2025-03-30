@@ -127,10 +127,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.25.1.tgz#7d79922cb2d88f9048f06393dbf62d2e4accb584"
   integrity sha512-Y1EQdcfwMSeQN/ujR5VayLOJ1BHaK+ssyk0AEzPjC+t1lITgsnccPqFjb6V+LsTp/9Iov4ysfjxLaGJ9RPtkVg==
 
-"@kabir.26/binge-watch-common@^1.0.13":
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/@kabir.26/binge-watch-common/-/binge-watch-common-1.0.13.tgz#61b54fdc5982f50b871955797367eb3282eccb20"
-  integrity sha512-ERUS2jqgBkdMeHoen23NaWX9fL2JsBPZW8NjCYoOp1dJ0HvGhOQ8+kjSqzax6Ch/4kvfD67r/GCHyYaoilglrg==
+"@kabir.26/binge-watch-common@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@kabir.26/binge-watch-common/-/binge-watch-common-1.0.15.tgz#8108c9d8f7414f17a53fc717ac8e06c67c6c74b9"
+  integrity sha512-mzU9dIEEzDJj1dBQP28KjUQ6gVoHbJ+xgkQKBBCkY2A0VCpi+8mUHIIKYTWmPu0Q4X+N+ZPNO+ZskTJW91i0iA==
   dependencies:
     zod "^3.24.2"
 

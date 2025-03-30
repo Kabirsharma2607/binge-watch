@@ -5,11 +5,15 @@ import { PrismaClient } from "@prisma/client";
 
 import {
   WebSocketActions,
+  actionsSchema,
   joinRoomSchema,
   leaveRoomSchema,
+  textMessageSchema,
 } from "@kabir.26/binge-watch-common";
 import { messageParsingError } from "./utils/utils";
 import { handleLeaveRoom } from "./leave-room";
+import { broadcastMessageToRoom } from "./text-message";
+import { handleVideoActions } from "./actions";
 
 export const prisma = new PrismaClient();
 export const rooms: Record<string, Set<WebSocket>> = {}; // Global room storage
@@ -46,6 +50,29 @@ wss.on("connection", (ws) => {
           } = data;
           await handleLeaveRoom(roomId, username, ws);
           break;
+        }
+        case WebSocketActions.TEXT_MESSAGE: {
+          const { success, data } = textMessageSchema.safeParse(parsedMessage);
+          if (!success) {
+            messageParsingError(ws);
+            return;
+          }
+          const {
+            data: { roomId, message, username },
+          } = data;
+          await broadcastMessageToRoom(roomId, username, message, ws);
+          break;
+        }
+        case WebSocketActions.ACTIONS: {
+          const { success, data } = actionsSchema.safeParse(parsedMessage);
+          if (!success) {
+            messageParsingError(ws);
+            return;
+          }
+          const {
+            data: { action, roomId, username },
+          } = data;
+          await handleVideoActions(roomId, username, action, ws);
         }
         default:
           break;

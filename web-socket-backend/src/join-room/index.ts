@@ -10,6 +10,7 @@ export const handleRoomJoin = async (
     const user = await prisma.users.findUnique({ where: { username } });
     if (!user) {
       ws.send(JSON.stringify({ type: "error", message: "User not found" }));
+      ws.close();
       return;
     }
     console.log(typeof roomId);
@@ -20,6 +21,32 @@ export const handleRoomJoin = async (
     });
     if (!room) {
       ws.send(JSON.stringify({ type: "error", message: "Room not found" }));
+      ws.close();
+      return;
+    }
+    if (room.curr_capacity === room.capacity) {
+      ws.send(
+        JSON.stringify({
+          type: "error",
+          message: "Room is already full",
+        })
+      );
+      ws.close();
+      return;
+    }
+    const userInAnotherRoom = await prisma.room_participant.findFirst({
+      where: {
+        user_id: user.user_id,
+      },
+    });
+    if (userInAnotherRoom) {
+      ws.send(
+        JSON.stringify({
+          type: "error",
+          message: "User is already in another room",
+        })
+      );
+      ws.close();
       return;
     }
     const alreadyJoinedRoom = await prisma.room_participant.findUnique({
@@ -37,6 +64,7 @@ export const handleRoomJoin = async (
           message: "User already joined the room",
         })
       );
+      ws.close();
       return;
     }
     await prisma.room_participant.create({
@@ -58,8 +86,12 @@ export const handleRoomJoin = async (
           increment: 1,
         },
       },
+      select: {
+        curr_capacity: true,
+      },
     });
     (ws as any).roomId = roomId;
+    (ws as any).username = username;
     console.log(`✅ ${username} joined room ${roomId}`);
 
     rooms[roomId].forEach((client) => {
@@ -69,8 +101,17 @@ export const handleRoomJoin = async (
         );
       }
     });
+    ws.send(
+      JSON.stringify({
+        type: "current-users",
+        users: Array.from(rooms[roomId]).map(
+          (client) => (client as any).username
+        ),
+      })
+    );
   } catch (error) {
     console.error(error);
     ws.send(JSON.stringify({ type: "error", message: "Internal error" }));
+    ws.close();
   }
 };

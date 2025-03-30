@@ -20,8 +20,6 @@ model users {
   username          String             @unique
   email             String             @unique
   authDetails       auth_details?      @relation
-  user_current_room room_details?      @relation(fields: [roomDetailsId], references: [id], onDelete: SetNull)
-  roomDetailsId     Int?
   room_participant  room_participant[]
 
   @@index([id])
@@ -58,7 +56,6 @@ model room_details {
   created_at    DateTime           @default(now())
   updated_at    DateTime           @updatedAt
   participants  room_participant[] @relation
-  User          users[]
 
   @@index([id])
   @@index([room_id])

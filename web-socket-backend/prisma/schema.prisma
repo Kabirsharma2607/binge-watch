@@ -26,7 +26,6 @@ model room_details {
   updated_at       DateTime
   curr_capacity    Int                @default(0)
   room_participant room_participant[]
-  users            users[]
 
   @@index([id])
   @@index([room_id])
@@ -49,10 +48,8 @@ model users {
   name             String
   username         String             @unique
   email            String             @unique
-  roomDetailsId    Int?
   auth_details     auth_details?
   room_participant room_participant[]
-  room_details     room_details?      @relation(fields: [roomDetailsId], references: [id])
 
   @@index([id])
   @@index([user_id])

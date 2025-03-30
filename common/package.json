@@ -1,6 +1,6 @@
 {
   "name": "@kabir.26/binge-watch-common",
-  "version": "1.0.13",
+  "version": "1.0.15",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
