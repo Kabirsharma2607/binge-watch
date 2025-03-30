@@ -30,8 +30,9 @@ router.post("/create-room", (req, res) => __awaiter(void 0, void 0, void 0, func
             res.status(400).json({ message: "Invalid room data", error: data });
             return;
         }
+        console.log("25");
         const { userId } = req;
-        const user = yield prisma.user.findUnique({
+        const user = yield prisma.users.findUnique({
             where: {
                 user_id: userId,
             },
@@ -42,7 +43,7 @@ router.post("/create-room", (req, res) => __awaiter(void 0, void 0, void 0, func
         }
         const { capacity, name } = data;
         const roomId = (0, utils_1.generateRoomId)();
-        const room = yield prisma.roomDetails.create({
+        const room = yield prisma.room_details.create({
             data: {
                 room_id: roomId,
                 name,
@@ -57,21 +58,21 @@ router.post("/create-room", (req, res) => __awaiter(void 0, void 0, void 0, func
         return;
     }
     catch (error) {
+        console.log(error);
         res.status(500).send("Internal error");
         return;
     }
 }));
 router.post("/join-room/:roomId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log("here");
         const { userId } = req;
-        const user = yield prisma.user.findUnique({
+        const user = yield prisma.users.findUnique({
             where: {
                 user_id: userId,
             },
         });
         const { roomId } = req.params;
-        const room = yield prisma.roomDetails.findUnique({
+        const room = yield prisma.room_details.findUnique({
             where: {
                 room_id: roomId,
             },
@@ -84,7 +85,7 @@ router.post("/join-room/:roomId", (req, res) => __awaiter(void 0, void 0, void 0
             res.status(400).json({ message: "Invalid user" });
             return;
         }
-        res.status(200).json({ message: "Authenticated" });
+        res.status(200).json({ message: "Success" });
         return;
     }
     catch (error) { }

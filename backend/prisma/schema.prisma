@@ -14,15 +14,15 @@ datasource db {
 }
 
 model users {
-  id                Int               @id @default(autoincrement())
-  user_id           String            @unique @default(uuid())
+  id                Int                @id @default(autoincrement())
+  user_id           String             @unique @default(uuid())
   name              String
-  username          String            @unique
-  email             String            @unique
+  username          String             @unique
+  email             String             @unique
   authDetails       auth_details?      @relation
-  user_current_room room_details?      @relation(fields: [roomDetailsId], references: [id])
+  user_current_room room_details?      @relation(fields: [roomDetailsId], references: [id], onDelete: SetNull)
   roomDetailsId     Int?
-  room_participant   room_participant[]
+  room_participant  room_participant[]
 
   @@index([id])
   @@index([user_id])
@@ -32,31 +32,34 @@ model auth_details {
   id       Int    @id @default(autoincrement())
   password String
   user_id  String @unique
-  user     users   @relation(fields: [user_id], references: [user_id])
+  user     users  @relation(fields: [user_id], references: [user_id])
 
   @@index([id])
   @@index([user_id])
 }
 
 model room_participant {
-  id      Int         @id @default(autoincrement())
-  room_id BigInt
+  id      Int          @id @default(autoincrement())
+  room_id String
   user_id String
   room    room_details @relation(fields: [room_id], references: [room_id])
   user    users        @relation(fields: [user_id], references: [user_id])
 
   @@unique([room_id, user_id])
+  @@index([room_id])
 }
 
 model room_details {
-  id           Int               @id @default(autoincrement())
-  room_id      BigInt            @unique @default(dbgenerated())
-  name         String
-  capacity     Int
-  created_at   DateTime          @default(now())
-  updated_at   DateTime          @updatedAt
-  participants room_participant[] @relation
-  User         users[]
+  id            Int                @id @default(autoincrement())
+  room_id       String             @unique
+  name          String
+  capacity      Int
+  curr_capacity Int                @default(0)
+  created_at    DateTime           @default(now())
+  updated_at    DateTime           @updatedAt
+  participants  room_participant[] @relation
+  User          users[]
 
   @@index([id])
+  @@index([room_id])
 }

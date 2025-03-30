@@ -28,3 +28,49 @@ export const createRoomSchema = z
   .strict();
 
 export type CreateRoomSchema = z.infer<typeof createRoomSchema>;
+
+export enum WebSocketActions {
+  JOIN_ROOM = "JOIN_ROOM",
+  LEAVE_ROOM = "LEAVE_ROOM",
+  TEXT_MESSAGE = "TEXT_MESSAGE",
+  ACTIONS = "ACTIONS",
+}
+
+export const joinRoomSchema = z.object({
+  type: z.enum([WebSocketActions.JOIN_ROOM]),
+  data: z.object({
+    roomId: z.string(),
+    username: z.string(),
+  }),
+});
+
+export type JoinRoomSchema = z.infer<typeof joinRoomSchema>;
+
+// TODO: A standard type, data schema
+// export const websocketMessageSchema = z.object({
+//   type: z.enum([
+//     WebSocketActions.JOIN_ROOM,
+//     WebSocketActions.LEAVE_ROOM,
+//     WebSocketActions.TEXT_MESSAGE,
+//     WebSocketActions.ACTIONS,
+//   ]),
+//   data: z.union([
+//     z.object({
+//       roomId: z.string(),
+//       username: z.string(),
+//     }),
+//     z.object({
+//       username: z.string(),
+//     }),
+//   ]),
+// });
+
+export const leaveRoomSchema = z.object({
+  type: z.enum([WebSocketActions.LEAVE_ROOM]),
+  data: z.object({
+    roomId: z.string(),
+    username: z.string(),
+  }),
+});
+
+export type LeaveRoomSchema = z.infer<typeof leaveRoomSchema>;

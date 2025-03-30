@@ -19,25 +19,28 @@ model auth_details {
 
 model room_details {
   id               Int                @id @default(autoincrement())
-  room_id          BigInt             @unique
+  room_id          String             @unique
   name             String
   capacity         Int
   created_at       DateTime           @default(now())
   updated_at       DateTime
+  curr_capacity    Int                @default(0)
   room_participant room_participant[]
   users            users[]
 
   @@index([id])
+  @@index([room_id])
 }
 
 model room_participant {
   id           Int          @id @default(autoincrement())
-  room_id      BigInt
+  room_id      String
   user_id      String
   room_details room_details @relation(fields: [room_id], references: [room_id])
   users        users        @relation(fields: [user_id], references: [user_id])
 
   @@unique([room_id, user_id])
+  @@index([room_id])
 }
 
 model users {

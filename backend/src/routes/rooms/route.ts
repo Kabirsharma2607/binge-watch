@@ -22,7 +22,7 @@ router.post("/create-room", async (req: Request, res: Response) => {
       res.status(400).json({ message: "Invalid room data", error: data });
       return;
     }
-
+    console.log("25");
     const { userId } = req;
 
     const user = await prisma.users.findUnique({
@@ -37,9 +37,10 @@ router.post("/create-room", async (req: Request, res: Response) => {
     }
 
     const { capacity, name } = data;
-    // const roomId = generateRoomId();
+    const roomId = generateRoomId();
     const room = await prisma.room_details.create({
       data: {
+        room_id: roomId,
         name,
         capacity,
       },
@@ -51,6 +52,7 @@ router.post("/create-room", async (req: Request, res: Response) => {
     });
     return;
   } catch (error) {
+    console.log(error);
     res.status(500).send("Internal error");
     return;
   }
@@ -67,7 +69,7 @@ router.post("/join-room/:roomId", async (req, res) => {
     const { roomId } = req.params;
     const room = await prisma.room_details.findUnique({
       where: {
-        room_id: Number(roomId),
+        room_id: roomId,
       },
     });
     if (!room) {

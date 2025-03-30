@@ -29,7 +29,7 @@ router.post("/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function
             return;
         }
         const { name, email, password, username } = data;
-        const user = yield prisma.user.findUnique({
+        const user = yield prisma.users.findUnique({
             where: {
                 username,
             },
@@ -39,7 +39,7 @@ router.post("/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function
             return;
         }
         const { hashedName, hashedEmail, hashedPassword } = yield (0, utils_1.userHashedSignupDetails)(name, email, password);
-        const newUser = yield prisma.user.create({
+        const newUser = yield prisma.users.create({
             data: {
                 name: hashedName,
                 username,
@@ -77,7 +77,7 @@ router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* 
             return;
         }
         const { username, password } = data;
-        const user = yield prisma.user.findUnique({
+        const user = yield prisma.users.findUnique({
             where: {
                 username,
             },

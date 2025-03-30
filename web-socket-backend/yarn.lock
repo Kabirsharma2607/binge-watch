@@ -127,6 +127,13 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.25.1.tgz#7d79922cb2d88f9048f06393dbf62d2e4accb584"
   integrity sha512-Y1EQdcfwMSeQN/ujR5VayLOJ1BHaK+ssyk0AEzPjC+t1lITgsnccPqFjb6V+LsTp/9Iov4ysfjxLaGJ9RPtkVg==
 
+"@kabir.26/binge-watch-common@^1.0.13":
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/@kabir.26/binge-watch-common/-/binge-watch-common-1.0.13.tgz#61b54fdc5982f50b871955797367eb3282eccb20"
+  integrity sha512-ERUS2jqgBkdMeHoen23NaWX9fL2JsBPZW8NjCYoOp1dJ0HvGhOQ8+kjSqzax6Ch/4kvfD67r/GCHyYaoilglrg==
+  dependencies:
+    zod "^3.24.2"
+
 "@prisma/client@^6.5.0":
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/@prisma/client/-/client-6.5.0.tgz#b5f4aa3820ff523734ef4e8dffe364ac9888369e"
@@ -264,3 +271,8 @@ ws@^8.18.1:
   version "8.18.1"
   resolved "https://registry.yarnpkg.com/ws/-/ws-8.18.1.tgz#ea131d3784e1dfdff91adb0a4a116b127515e3cb"
   integrity sha512-RKW2aJZMXeMxVpnZ6bck+RswznaxmzdULiBr6KY7XkTnW8uvt0iT9H5DkHUChXrc+uurzwa0rVI16n/Xzjdz1w==
+
+zod@^3.24.2:
+  version "3.24.2"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.24.2.tgz#8efa74126287c675e92f46871cfc8d15c34372b3"
+  integrity sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==
